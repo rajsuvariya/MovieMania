@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Movie Mania</string>
+    <string name="more_movie_button">Load more movies</string>
+</resources>

@@ -3,6 +3,8 @@ package com.suvariyaraj.movieratingapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashMap;
+
 /**
  * Created by GOODBOY-PC on 17/02/16.
  */
@@ -19,6 +21,7 @@ public class GridItem implements Parcelable{
     private int vote_count;
     private double popularity;
     private double vote_average;
+    private String trailer_key;
 
     public static final Parcelable.Creator<GridItem> CREATOR = new Parcelable.Creator<GridItem>() {
         public GridItem createFromParcel(Parcel in) {
@@ -40,6 +43,7 @@ public class GridItem implements Parcelable{
         popularity = in.readDouble();
         vote_average = in.readDouble();
         backdrop = in.readString();
+        trailer_key = in.readString();
     }
 
     @Override
@@ -54,6 +58,7 @@ public class GridItem implements Parcelable{
         dest.writeDouble(popularity);
         dest.writeDouble(vote_average);
         dest.writeString(backdrop);
+        dest.writeString(trailer_key);
     }
     public GridItem() {
         super();
@@ -145,6 +150,14 @@ public class GridItem implements Parcelable{
 
     public void setBackdrop(String backdrop) {
         this.backdrop = backdrop;
+    }
+
+    public String getTrailer_key() {
+        return trailer_key;
+    }
+
+    public void setTrailer_key(String trailer_key) {
+        this.trailer_key = trailer_key;
     }
 
     @Override

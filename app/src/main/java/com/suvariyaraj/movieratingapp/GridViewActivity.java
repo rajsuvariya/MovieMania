@@ -26,6 +26,9 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.suvariyaraj.movieratingapp.DBManager.DBAdapter;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -40,11 +43,13 @@ public class GridViewActivity extends ActionBarActivity {
     private ProgressBar mProgressBar;
     private GridViewAdapter mGridAdapter;
     private ArrayList<GridItem> mGridData;
-    private String API_KEY = YOUR_API_KEY;
+    private String API_KEY = "69961736ee88b39584ba695c3da7a759";
     private int page_number =1;
     private String FEED_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key="+API_KEY+"&page=";
 
-    private Button next, prev;
+    private Button next, prev, more;
+
+    int counter =0;
 
     public int getPage_number() {
         return page_number;
@@ -73,7 +78,7 @@ public class GridViewActivity extends ActionBarActivity {
         mProgressBar.setVisibility(View.VISIBLE);
 
 
-        Button more = (Button) findViewById(R.id.more_movies);
+        more = (Button) findViewById(R.id.more_movies);
         more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,7 +138,9 @@ public class GridViewActivity extends ActionBarActivity {
             if (result == 1) {
                 mGridAdapter.setGridData(mGridData);
                 page_number++;
+                more.setText("Load more movies");
             } else {
+                more.setText("Retry");
                 Toast.makeText(GridViewActivity.this, "Failed to fetch data!", Toast.LENGTH_SHORT).show();
             }
             mProgressBar.setVisibility(View.GONE);
@@ -211,6 +218,7 @@ public class GridViewActivity extends ActionBarActivity {
 
         switch(item.getItemId()){
             case R.id.sort_by_popolarity:
+                more.setVisibility(View.VISIBLE);
                 FEED_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key="+API_KEY+"&page=";
                 mGridData.clear();
                 page_number = 1;
@@ -218,6 +226,7 @@ public class GridViewActivity extends ActionBarActivity {
                 break;
 
             case R.id.sort_by_count:
+                more.setVisibility(View.VISIBLE);
                 FEED_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=vote_count.desc&api_key="+API_KEY+"&page=";
                 mGridData.clear();
                 page_number = 1;
@@ -225,16 +234,132 @@ public class GridViewActivity extends ActionBarActivity {
                 break;
 
             case R.id.sort_by_revenue:
+                more.setVisibility(View.VISIBLE);
                 FEED_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=revenue.desc&api_key="+API_KEY+"&page=";
                 mGridData.clear();
                 page_number = 1;
                 new AsyncHttpTask().execute(FEED_URL+""+page_number);
                 break;
 
+            case R.id.favourite_movies:
+                more.setVisibility(View.GONE);
+                mGridData.clear();
+                StringBuffer buffer = new StringBuffer();
+                DBAdapter dbAdapter = new DBAdapter(this);
+                ArrayList<Integer> result = dbAdapter.getAllFavouriteMovie();
+                counter=result.size();
+                mProgressBar.setVisibility(View.VISIBLE);
+                for(int i=0;i<result.size();i++){
+                    buffer.append("ID : "+result.get(i)+"\n");
+                    String FEED_URL = "http://api.themoviedb.org/3/movie/"+result.get(i)+"?api_key="+API_KEY;
+                    new AsyncHttpTask2().execute(FEED_URL);
+                }
+                Toast.makeText(getApplicationContext(), buffer, Toast.LENGTH_LONG).show();
+                break;
         }
         return true;
 
     }
 
-    
+    public class AsyncHttpTask2 extends AsyncTask<String, Void, Integer> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Toast.makeText(getApplicationContext(),"Called",Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            Integer result = 0;
+            try {
+                // Create Apache HttpClient
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpResponse httpResponse = httpclient.execute(new HttpGet(params[0]));
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+                // 200 represents HTTP OK
+                if (statusCode == 200) {
+                    String response = streamToString2(httpResponse.getEntity().getContent());
+                    parseResult2(response);
+                    result = 1; // Successful
+                } else {
+                    result = 0; //"Failed
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Log.d(TAG, e.getLocalizedMessage());
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            // Download complete. Let us update UI
+            Toast.makeText(getApplicationContext(),"Finidhed",Toast.LENGTH_SHORT).show();
+            if (result == 1) {
+                mGridAdapter.setGridData(mGridData);
+                counter--;
+            } else {
+                more.setText("Retry");
+                Toast.makeText(GridViewActivity.this, "Failed to fetch data!", Toast.LENGTH_SHORT).show();
+            }
+            if(counter==0){
+                mProgressBar.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    String streamToString2(InputStream stream) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
+        String line;
+        String result = "";
+        while ((line = bufferedReader.readLine()) != null) {
+            result += line;
+        }
+
+        // Close stream
+        if (null != stream) {
+            stream.close();
+        }
+        return result;
+    }
+
+    /**
+     * Parsing the feed results and get the list
+     * @param result
+     */
+    private void parseResult2(String result) {
+        try {
+            JSONObject response = new JSONObject(result);
+            GridItem item;
+            item = new GridItem();
+            String title = response.optString("original_title");
+            item.setTitle(title);
+            String image = response.optString("poster_path");
+            image = "http://image.tmdb.org/t/p/w500/"+image.substring(1);
+            item.setImage(image);
+            String backdrop = response.optString("backdrop_path");
+            backdrop = "http://image.tmdb.org/t/p/w500/"+backdrop.substring(1);
+            item.setBackdrop(backdrop);
+            int id = response.optInt("id");
+            item.setId(id);
+            String release_date = response.optString("release_date");
+            item.setRelease_date(release_date);
+            String adult = response.optString("adult");
+            item.setAdult(adult);
+            String overview = response.optString("overview");
+            item.setOverview(overview);
+            String original_language = response.optString("original_language");
+            item.setOriginal_language(original_language);
+            int vote_count = response.optInt("vote_count");
+            item.setVote_count(vote_count);
+            double popularity = response.optDouble("popularity");
+            item.setPopularity(popularity);
+            double vote_average = response.optDouble("vote_average");
+            item.setVote_average(vote_average);
+            mGridData.add(item);
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }
+    }
 }

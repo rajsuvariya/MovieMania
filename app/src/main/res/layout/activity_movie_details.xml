@@ -5,8 +5,9 @@
     android:background="#FAFAFA">
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -26,7 +27,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="3dp"
-                android:paddingBottom="3dp"
+                android:paddingBottom="6dp"
                 android:layout_below="@id/details_backdrop"
                 android:id="@+id/details_movie_name"
                 android:layout_width="match_parent"
@@ -47,64 +48,174 @@
                 android:textColor="#000000"
                 android:textSize="14dp"/>
 
-            <ImageView
+            <LinearLayout
                 android:layout_below="@+id/details_overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                android:id="@+id/temp_raw"
+                android:layout_margin="10dp">
+                <RelativeLayout
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/icon_star"
+                        android:background="@drawable/star"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        />
+
+                    <TextView
+                        android:layout_toRightOf="@+id/icon_star"
+                        android:layout_alignParentTop="true"
+                        android:textColor="#000000"
+                        android:id="@+id/details_rating"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="10dp"
+                        android:textSize="14dp"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/icon_calendar"
+                        android:background="@drawable/calender"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        />
+
+                    <TextView
+                        android:layout_toRightOf="@+id/icon_calendar"
+                        android:textColor="#000000"
+                        android:id="@+id/details_release_date"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="4dp"
+                        android:textSize="14dp"/>
+                </RelativeLayout>
+            </LinearLayout>
+            <ImageView
+                android:layout_below="@+id/temp_raw"
                 android:id="@+id/details_image"
                 android:layout_width="150dp"
                 android:layout_height="200dp"
                 android:layout_margin="10dp"/>
 
             <RelativeLayout
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="35dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/details_image"
-                android:layout_below="@+id/details_overview"
+                android:layout_below="@+id/temp_raw"
                 >
-                <ImageView
-                    android:id="@+id/icon_star"
-                    android:background="@drawable/star"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginRight="15dp"
-                    />
-
-                <TextView
-                    android:layout_toRightOf="@+id/icon_star"
-                    android:layout_alignParentTop="true"
-                    android:textColor="#000000"
-                    android:id="@+id/details_rating"
-                    android:layout_width="fill_parent"
+                <RelativeLayout
+                    android:id="@+id/divison_trailer"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="10dp"
-                    android:textSize="14dp"/>
+                    android:layout_margin="5dp">
+                    <ImageView
+                        android:id="@+id/icon_youtube"
+                        android:background="@drawable/youtube"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:layout_marginRight="15dp"
+                        />
 
-                <ImageView
-                    android:layout_marginTop="20dp"
-                    android:layout_below="@id/icon_star"
-                    android:id="@+id/icon_calendar"
-                    android:background="@drawable/calender"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginRight="15dp"
-                    />
+                    <TextView
+                        android:layout_toRightOf="@+id/icon_youtube"
+                        android:textColor="#000000"
+                        android:text="Watch Trailer"
+                        android:id="@+id/details_movie_trailer"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:textSize="14dp"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_margin="5dp"
+                    android:id="@+id/divison_review"
+                    android:layout_below="@+id/divison_trailer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/icon_review"
+                        android:background="@drawable/review"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        />
 
-                <TextView
-                    android:layout_toRightOf="@+id/icon_calendar"
-                    android:layout_below="@+id/icon_star"
-                    android:textColor="#000000"
-                    android:id="@+id/details_release_date"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="22dp"
-                    android:layout_marginRight="10dp"
-                    android:textSize="14dp"/>
+                    <TextView
+                        android:layout_toRightOf="@+id/icon_review"
+                        android:textColor="#000000"
+                        android:text="Read Reviews"
+                        android:id="@+id/details_movie_review"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:textSize="14dp"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_margin="5dp"
+                    android:id="@+id/divison_favourite"
+                    android:layout_below="@+id/divison_review"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/icon_favourite"
+                        android:src="@drawable/favourite_unselected"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        />
+
+                    <TextView
+                        android:layout_toRightOf="@+id/icon_favourite"
+                        android:textColor="#000000"
+                        android:text="Add to favourite"
+                        android:id="@+id/details_movie_favourite"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:textSize="14dp"/>
+                </RelativeLayout>
             </RelativeLayout>
+
+
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/details_image"-->
+                <!--android:id="@+id/review_tv"-->
+                <!--android:visibility="invisible"/>-->
+            <!--<ListView-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/review_list"-->
+                <!--android:layout_below="@+id/review_tv"-->
+                <!--android:layout_margin="10dp"-->
+                <!-->-->
+            <!--</ListView>-->
+
+
         </RelativeLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 </RelativeLayout>
